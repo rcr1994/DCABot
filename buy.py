@@ -161,35 +161,72 @@ class NotificationManager:
 
 
 class TradeLogger:
-    """Handles logging trades to CSV"""
-    
     def __init__(self, csv_path: str):
         self.csv_path = csv_path
-        self.fieldnames = ['timestamp', 'pair', 'price_eur', 'volume', 'euro_spent', 'order_id']
-    
+        self.koinly_csv_path = csv_path.replace(".csv", "_koinly.csv")
+
     def log_trade(self, pair: str, price: float, volume: float, euro_amount: float, txid: str) -> None:
-        """Log a trade to CSV file"""
-        timestamp = datetime.utcnow().isoformat()
+        timestamp = datetime.utcnow().replace(microsecond=0).isoformat()
+
         file_exists = os.path.isfile(self.csv_path) and os.path.getsize(self.csv_path) > 0
-        
-        try:
-            with open(self.csv_path, mode='a', newline='', encoding='utf-8') as csvfile:
-                writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames)
-                if not file_exists:
-                    writer.writeheader()
-                    
-                writer.writerow({
-                    'timestamp': timestamp,
-                    'pair': pair,
-                    'price_eur': f"{price:.6f}",
-                    'volume': f"{volume:.8f}",
-                    'euro_spent': f"{euro_amount:.2f}",
-                    'order_id': txid
-                })
-                
-            print(f"[INFO] Trade logged to {self.csv_path}")
-        except Exception as e:
-            print(f"[ERROR] Failed to log trade to CSV: {str(e)}")
+        with open(self.csv_path, 'a', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=['timestamp', 'pair', 'price_eur', 'volume', 'euro_spent', 'order_id'])
+            if not file_exists:
+                writer.writeheader()
+            writer.writerow({
+                'timestamp': timestamp,
+                'pair': pair,
+                'price_eur': f"{price:.2f}",
+                'volume': f"{volume:.8f}",
+                'euro_spent': f"{euro_amount:.2f}",
+                'order_id': txid
+            })
+
+        koinly_exists = os.path.isfile(self.koinly_csv_path) and os.path.getsize(self.koinly_csv_path) > 0
+        with open(self.koinly_csv_path, 'a', newline='', encoding='utf-8') as kf:
+            writer = csv.DictWriter(kf, fieldnames=[
+                'Date', 'Sent Amount', 'Sent Currency', 'Received Amount', 'Received Currency',
+                'Fee Amount', 'Fee Currency', 'Net Worth Amount', 'Net Worth Currency', 'Label', 'Description', 'TxHash'
+            ])
+            if not koinly_exists:
+                writer.writeheader()
+            writer.writerow({
+                'Date': timestamp,
+                'Sent Amount': euro_amount,
+                'Sent Currency': 'EUR',
+                'Received Amount': volume,
+                'Received Currency': self.convert_kraken_pair_to_symbol(pair),
+                'Fee Amount': 0,
+                'Fee Currency': '',
+                'Net Worth Amount': euro_amount,
+                'Net Worth Currency': 'EUR',
+                'Label': 'Buy',
+                'Description': f'Buy {pair}',
+                'TxHash': txid
+            })
+
+    def convert_kraken_pair_to_symbol(self, pair: str) -> str:
+        # Define known quote currencies Kraken uses
+        quote_currencies = ['EUR', 'USD', 'USDT', 'BTC']
+
+        # Remove quote currency suffix if present
+        for quote in quote_currencies:
+            if pair.endswith(quote):
+                base = pair[:-len(quote)]
+                break
+        else:
+            base = pair  # no quote suffix matched
+
+        # Known Kraken exceptions mapping
+        if base == 'XBT':
+            return 'BTC'
+
+        # Remove leading 'X' or 'Z' if present (Kraken's asset class prefixes)
+        if base.startswith(('X', 'Z')):
+            base = base[1:]
+
+        # Otherwise, return base as symbol
+        return base
 
 
 class DCABot:
