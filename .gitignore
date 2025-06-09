@@ -1,2 +1,3 @@
 config.json
-kraken_trades.csv
+*.log
+*.csv
