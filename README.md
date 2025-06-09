@@ -13,7 +13,9 @@ Dollar Cost Averaging is an investment strategy where you invest a fixed amount 
 - **Notifications**: 
   - Telegram alerts for purchase success/failure
   - Email notifications with transaction details
-- **Logging**: CSV logging of all transactions for record-keeping
+- **Logging**: 
+  - CSV logging of all transactions for record-keeping
+  - Koinly-compatible CSV export for tax reporting
 - **Balance Checking**: Verifies sufficient funds before executing trades
 - **Docker Support**: Run as a containerized application
 
@@ -160,7 +162,17 @@ You can run the Docker container on a schedule:
    - Calculates the volume to purchase based on your configured EUR amount
    - Places a market buy order
    - Logs the transaction and sends notifications
+   - Creates Koinly-compatible CSV entries for tax reporting
 4. Updates your remaining balance for subsequent purchases
+
+## Transaction Logging
+
+The bot logs all transactions in two formats:
+
+1. **Standard CSV Log**: Contains timestamp, pair, price, volume, euro amount, and transaction ID.
+2. **Koinly-compatible CSV**: Formatted specifically for import into Koinly tax software, containing all the required fields for proper tax calculations and reporting.
+
+The Koinly file is automatically created with the same name as your main log file but with `_koinly` suffix (e.g., `kraken_trades_koinly.csv`).
 
 ## Security Considerations
 
