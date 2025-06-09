@@ -1,0 +1,31 @@
+# Ignore Python cache and build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore config containing secrets
+config.json
+
+# Ignore env files or credentials
+.env
+*.env
+
+# Ignore version control
+.git
+.gitignore
+
+# Ignore Docker stuff you don’t want inside image
+Dockerfile
+.dockerignore
+
+# Ignore logs and runtime files
+*.log
+*.sqlite
+*.db
+
+# Ignore editor/IDE files
+.vscode/
+.idea/
+*.swp
+*~

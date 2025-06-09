@@ -1,0 +1,31 @@
+{
+    "kraken": {
+        "api_key": "YOUR_KRAKEN_API_KEY_HERE",
+        "private_key": "YOUR_KRAKEN_PRIVATE_KEY_HERE"
+    },
+    "coins": [
+        {
+            "pair": "XBTEUR",
+            "amount": 50
+        },
+        {
+            "pair": "ETHEUR",
+            "amount": 50
+        }
+    ],
+    "notifications": {
+        "telegram": {
+            "bot_token": "YOUR_TELEGRAM_BOT_TOKEN_HERE",
+            "chat_id": "YOUR_TELEGRAM_CHAT_ID_HERE"
+        },
+        "email": {
+            "smtp_server": "smtp.gmail.com",
+            "smtp_port": 587,
+            "from_email": "your.email@example.com",
+            "to_email": "your.email@example.com",
+            "username": "your.email@example.com",
+            "password": "YOUR_EMAIL_APP_PASSWORD_HERE"
+        }
+    },
+    "csv_log_file": "/app/kraken_trades.csv"
+}
