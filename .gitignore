@@ -1,3 +1,15 @@
+# Configuration file with sensitive API keys
 config.json
+
+# Log files
 *.log
+bot.log
+
+# CSV data files
 *.csv
+kraken_trades.csv
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
